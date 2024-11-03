@@ -1,13 +1,14 @@
-// #!/usr/bin/env node
 import { Command } from "commander";
 import path from "path";
 import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
+import chalk from "chalk";
 
 import { generateDescription } from "./describe";
 import { generateTranscription } from "./transcribe";
 import { generateReport } from "./report";
 import { isAudioFile, isVideoFile } from "./utils/check-type";
+import { checkFFmpeg } from "./utils/ffmpeg-check";
 
 const MODEL_TIERS = {
   first: {
@@ -149,7 +150,7 @@ async function processFile(
     console.log(`Transcription: ${transcriptionResult.transcriptionPath}`);
   } catch (error) {
     console.error(
-      `Error processing ${inputFile}:`,
+      chalk.red(`Error processing ${inputFile}:`),
       error instanceof Error ? error.message : String(error)
     );
     throw error;
@@ -157,10 +158,18 @@ async function processFile(
 }
 
 async function run() {
+  // First check for FFmpeg
+  const ffmpegAvailable = await checkFFmpeg();
+  if (!ffmpegAvailable) {
+    process.exit(1);
+  }
+
   if (!process.env.GEMINI_API_KEY) {
-    throw new Error(
-      "Please place a GEMINI_API_KEY in the environment to use offmute."
+    console.error(chalk.red.bold("\n❌ Missing API Key"));
+    console.error(
+      chalk.yellow("\nPlease set your GEMINI_API_KEY in the environment to use offmute.")
     );
+    process.exit(1);
   }
 
   const program = new Command();
@@ -197,17 +206,17 @@ async function run() {
   program.parse();
 
   console.log(
-    "⭐ Welcome to offmute - built by Hrishi (https://twitter.com/hrishioa) and named by Ben (https://twitter.com/bencmejla) ⭐"
+    chalk.cyan("⭐ Welcome to offmute - built by Hrishi (https://twitter.com/hrishioa) and named by Ben (https://twitter.com/bencmejla) ⭐")
   );
 
   const options = program.opts();
   const input = program.args[0];
 
   if (!input || !MODEL_TIERS[options.tier as keyof typeof MODEL_TIERS]) {
-    console.error("Error: Invalid input path or tier selection");
-    console.log("\nAvailable tiers:");
+    console.error(chalk.red("Error: Invalid input path or tier selection"));
+    console.log(chalk.yellow("\nAvailable tiers:"));
     Object.entries(MODEL_TIERS).forEach(([key, value]) => {
-      console.log(`- ${key}: ${value.label}`);
+      console.log(chalk.cyan(`- ${key}: ${value.label}`));
     });
     process.exit(1);
   }
@@ -221,12 +230,12 @@ async function run() {
   const files = stats.isDirectory() ? await findFiles(input) : [input];
 
   if (files.length === 0) {
-    console.error("No video files found");
+    console.error(chalk.red("No video files found"));
     process.exit(1);
   }
 
   console.log(
-    `Found ${files.length} video file${files.length > 1 ? "s" : ""} to process`
+    chalk.green(`Found ${files.length} video file${files.length > 1 ? "s" : ""} to process`)
   );
 
   const startTime = Date.now();
@@ -256,24 +265,28 @@ async function run() {
 
   const totalTime = (Date.now() - startTime) / 1000;
 
-  console.log("\nProcessing Summary:");
-  console.log(`Total time: ${formatDuration(totalTime)}`);
-  console.log(`Successfully processed: ${results.success}/${files.length}`);
+  console.log(chalk.cyan("\nProcessing Summary:"));
+  console.log(chalk.white(`Total time: ${formatDuration(totalTime)}`));
+  console.log(
+    chalk.green(`Successfully processed: ${results.success}/${files.length}`)
+  );
 
   if (results.failed > 0) {
-    console.log("\nFailed files:");
-    results.failedFiles.forEach((file) => console.log(`- ${file}`));
+    console.log(chalk.red("\nFailed files:"));
+    results.failedFiles.forEach((file) =>
+      console.log(chalk.yellow(`- ${file}`))
+    );
     process.exit(1);
   } else if (results.success > 0) {
     console.log(
-      "\n🌟 If that worked, consider starring https://github.com/southbridgeai/offmute !"
+      chalk.cyan("\n🌟 If that worked, consider starring https://github.com/southbridgeai/offmute !")
     );
-    console.log("    https://github.com/southbridgeai/offmute");
+    console.log(chalk.cyan("    https://github.com/southbridgeai/offmute"));
   }
 }
 
 process.on("unhandledRejection", (error) => {
-  console.error("Fatal Error:", error);
+  console.error(chalk.red("Fatal Error:"), error);
   process.exit(1);
 });
 
