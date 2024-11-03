@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from "commander";
 import path from "path";
 import fs from "fs";
@@ -167,7 +168,9 @@ async function run() {
   if (!process.env.GEMINI_API_KEY) {
     console.error(chalk.red.bold("\n❌ Missing API Key"));
     console.error(
-      chalk.yellow("\nPlease set your GEMINI_API_KEY in the environment to use offmute.")
+      chalk.yellow(
+        "\nPlease set your GEMINI_API_KEY in the environment to use offmute."
+      )
     );
     process.exit(1);
   }
@@ -206,7 +209,9 @@ async function run() {
   program.parse();
 
   console.log(
-    chalk.cyan("⭐ Welcome to offmute - built by Hrishi (https://twitter.com/hrishioa) and named by Ben (https://twitter.com/bencmejla) ⭐")
+    chalk.cyan(
+      "⭐ Welcome to offmute - built by Hrishi (https://twitter.com/hrishioa) and named by Ben (https://twitter.com/bencmejla) ⭐"
+    )
   );
 
   const options = program.opts();
@@ -235,7 +240,11 @@ async function run() {
   }
 
   console.log(
-    chalk.green(`Found ${files.length} video file${files.length > 1 ? "s" : ""} to process`)
+    chalk.green(
+      `Found ${files.length} video file${
+        files.length > 1 ? "s" : ""
+      } to process`
+    )
   );
 
   const startTime = Date.now();
@@ -279,7 +288,9 @@ async function run() {
     process.exit(1);
   } else if (results.success > 0) {
     console.log(
-      chalk.cyan("\n🌟 If that worked, consider starring https://github.com/southbridgeai/offmute !")
+      chalk.cyan(
+        "\n🌟 If that worked, consider starring https://github.com/southbridgeai/offmute !"
+      )
     );
     console.log(chalk.cyan("    https://github.com/southbridgeai/offmute"));
   }
