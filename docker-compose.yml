@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  offmute-api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - ./uploads:/app/uploads

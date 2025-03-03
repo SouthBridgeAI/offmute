@@ -27,4 +27,12 @@ export default defineConfig([
       js: "#!/usr/bin/env node",
     },
   },
+  // Build for the API server
+  {
+    entry: ["src/api.ts"],
+    format: ["esm"],
+    sourcemap: true,
+    clean: false,
+    outDir: "dist",
+  },
 ]);

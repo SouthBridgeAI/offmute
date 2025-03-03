@@ -16,7 +16,7 @@ interface GenerateReportOptions {
   showProgress?: boolean;
 }
 
-interface GenerateReportResult {
+export interface GenerateReportResult {
   reportPath: string;
   sections: ReportSection[];
   intermediateOutputPath: string;
