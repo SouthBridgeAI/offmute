@@ -82,6 +82,7 @@ Options:
 - **Economy Tier** (`economy`): Gemini 2.0 Flash models for all operations
 - **Budget Tier** (`budget`): Gemini 2.0 Flash for description, Gemini 2.0 Flash Lite for transcription and report
 - **Experimental Tier** (`experimental`): Uses the cutting-edge Gemini 2.5 Pro Preview model for all operations, with support for 65k token outputs
+- **Experimental Budget Tier** (`experimentalBudget`): Uses the cutting-edge Gemini 2.5 Flash Preview model for all operations, with support for 65k token outputs
 
 ### As a Module
 

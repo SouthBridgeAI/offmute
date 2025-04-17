@@ -48,6 +48,12 @@ const MODEL_TIERS = {
     report: "gemini-2.5-pro-preview-03-25",
     label: "Experimental Tier (Gemini 2.5 Pro Preview)",
   },
+  experimentalBudget: {
+    description: "gemini-2.5-flash-preview-04-17",
+    transcription: "gemini-2.5-flash-preview-04-17",
+    report: "gemini-2.5-flash-preview-04-17",
+    label: "Experimental Budget Tier (Gemini 2.5 Flash Preview)",
+  },
 } as const;
 
 function getVideoDuration(filePath: string): Promise<number> {
