@@ -69,7 +69,7 @@ Options:
 - `-t, --tier <tier>`: Processing tier (first, business, economy, budget, experimental) [default: "business"]
 - `-s, --save-intermediates`: Save intermediate processing files
 - `-id, --intermediates-dir <path>`: Custom directory for intermediate output
-- `-sc, --screenshot-count <number>`: Number of screenshots to extract [default: 4]
+- `-sc, --screenshot-count <number>`: Number of screenshots to extract for video [default: 4]
 - `-ac, --audio-chunk-minutes <number>`: Length of audio chunks in minutes [default: 10]
 - `-r, --report`: Generate a structured meeting report
 - `-rd, --reports-dir <path>`: Custom directory for report output
