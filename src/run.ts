@@ -311,13 +311,23 @@ async function run() {
     process.exit(1);
   }
 
-  console.log(
-    chalk.green(
-      `Found ${files.length} video file${
-        files.length > 1 ? "s" : ""
-      } to process`
-    )
-  );
+console.log(
+  chalk.green(
+    ((audioCount: number) => {
+      const videoCount = files.length - audioCount;
+      const messages: string[] = [];
+      
+      if (audioCount > 0) {
+        messages.push(`Found ${audioCount} audio file${audioCount > 1 ? "s" : ""} to process`);
+      }
+      if (videoCount > 0) {
+        messages.push(`Found ${videoCount} video file${videoCount > 1 ? "s" : ""} to process`);
+      }
+      
+      return messages.join('\n');
+    })(files.filter(fn => isAudioFile(fn)).length)
+  )
+);
 
   const startTime = Date.now();
   const results = {
