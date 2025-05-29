@@ -5,7 +5,7 @@ packages/*/*.wasm
 *.a
 profile.json
 dist
-
+*.tgz
 mandark-history.json
 compiled-code.txt
 
