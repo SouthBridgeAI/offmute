@@ -77,6 +77,12 @@ const MODEL_TIERS = {
     report: "gemini-2.5-flash-preview-04-17",
     label: "Experimental Budget Tier (Gemini 2.5 Flash Preview)",
   },
+  "3-preview": {
+    description: "gemini-3-pro-preview",
+    transcription: "gemini-3-pro-preview",
+    report: "gemini-3-pro-preview",
+    label: "3 Preview Tier (Gemini 3 Pro Preview)",
+  },
 } as const;
 
 // Combined model configurations
@@ -366,14 +372,14 @@ console.log(
     ((audioCount: number) => {
       const videoCount = files.length - audioCount;
       const messages: string[] = [];
-      
+
       if (audioCount > 0) {
         messages.push(`Found ${audioCount} audio file${audioCount > 1 ? "s" : ""} to process`);
       }
       if (videoCount > 0) {
         messages.push(`Found ${videoCount} video file${videoCount > 1 ? "s" : ""} to process`);
       }
-      
+
       return messages.join('\n');
     })(files.filter(fn => isAudioFile(fn)).length)
   )
