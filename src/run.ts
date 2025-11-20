@@ -5,6 +5,20 @@ import fs from "fs";
 import ffmpeg from "fluent-ffmpeg";
 import chalk from "chalk";
 import os from "os";
+import { fileURLToPath } from "url";
+
+// Handle both ESM and CJS environments
+let __dirname: string;
+try {
+  __dirname = path.dirname(fileURLToPath(import.meta.url));
+} catch {
+  // Fallback for CJS - use dist directory
+  __dirname = path.resolve(__filename ? path.dirname(__filename) : process.cwd());
+}
+
+const packageJson = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "../package.json"), "utf-8")
+);
 
 import { generateDescription } from "./describe";
 import { generateTranscription } from "./transcribe";
@@ -313,7 +327,7 @@ async function run() {
       "-i, --instructions <text>",
       "Custom context or instructions to include in AI prompts"
     )
-    .version("0.1.4");
+    .version(packageJson.version);
 
   program.parse();
 
