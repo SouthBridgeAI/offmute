@@ -292,12 +292,12 @@ async function run() {
     .argument("<input>", "Input video file or directory path")
     .option(
       "-m, --model <model>",
-      "Model selection (pro, flash, flash-lite)",
+      "Model selection (3-preview, pro, flash, flash-lite)",
       "pro"
     )
     .option(
       "-t, --tier <tier>",
-      "[DEPRECATED] Processing tier (first, business, economy, budget, experimental) - use --model instead"
+      "[DEPRECATED] Processing tier (first, business, economy, budget, experimental, experimentalBudget, 3-preview) - use --model instead"
     )
     .option(
       "-s, --save-intermediates",
