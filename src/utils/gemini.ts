@@ -73,7 +73,7 @@ function detectMimeType(filePath: string): string {
  */
 async function cleanupFiles(
   fileManager: GoogleAIFileManager,
-  uploadedFiles: Array<{ name: string }>
+  uploadedFiles: Array<{ name: string }>,
 ): Promise<void> {
   await Promise.allSettled(
     uploadedFiles.map(async (file) => {
@@ -83,7 +83,7 @@ async function cleanupFiles(
       } catch (error) {
         console.warn(`Failed to delete file ${file.name}:`, error);
       }
-    })
+    }),
   );
 }
 
@@ -97,15 +97,14 @@ async function processGenerationAttempt(
   prompt: string,
   files: FileInput[],
   temperature: number = 0,
-  schema?: any
+  schema?: any,
 ): Promise<GeminiResponse> {
   const uploadedFiles: Array<{ name: string }> = [];
 
   try {
     // Determine max output tokens based on model
     let maxOutputTokens = 8192; // Default for most models
-    if (modelName.includes("gemini-2.5")) {
-      // Gemini 2.5 models support larger output
+    if (modelName.includes("gemini-2.5") || modelName.includes("gemini-3")) {
       maxOutputTokens = 65536;
     }
 
@@ -155,7 +154,7 @@ async function processGenerationAttempt(
           },
           originalFile: uploadResult.file,
         };
-      })
+      }),
     );
 
     const modelInput: Array<string | Part> = [
@@ -191,7 +190,7 @@ export async function generateWithGemini(
   modelName: string,
   prompt: string,
   files: FileInput[],
-  options: GenerateOptions = {}
+  options: GenerateOptions = {},
 ): Promise<GeminiResponse> {
   const { maxRetries = 1, retryDelayMs = 2000, temperature = 0 } = options;
 
@@ -210,7 +209,7 @@ export async function generateWithGemini(
         prompt,
         files,
         temperature,
-        options.schema
+        options.schema,
       );
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
@@ -219,7 +218,7 @@ export async function generateWithGemini(
         console.warn(
           `Generation attempt ${attempt + 1}/${maxRetries} failed: ${
             lastError.message
-          }`
+          }`,
         );
         await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
       }

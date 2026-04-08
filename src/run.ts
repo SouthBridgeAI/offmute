@@ -13,11 +13,13 @@ try {
   __dirname = path.dirname(fileURLToPath(import.meta.url));
 } catch {
   // Fallback for CJS - use dist directory
-  __dirname = path.resolve(__filename ? path.dirname(__filename) : process.cwd());
+  __dirname = path.resolve(
+    __filename ? path.dirname(__filename) : process.cwd(),
+  );
 }
 
 const packageJson = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "../package.json"), "utf-8")
+  fs.readFileSync(path.join(__dirname, "../package.json"), "utf-8"),
 );
 
 import { generateDescription } from "./describe";
@@ -50,6 +52,24 @@ const SIMPLE_MODELS = {
     transcription: "gemini-2.5-flash-lite",
     report: "gemini-2.5-flash-lite",
     label: "Gemini 2.5 Flash Lite",
+  },
+  "3": {
+    description: "gemini-3-pro-preview",
+    transcription: "gemini-3-pro-preview",
+    report: "gemini-3-pro-preview",
+    label: "Gemini 3 Pro Preview",
+  },
+  "3-flash": {
+    description: "gemini-3-flash-preview",
+    transcription: "gemini-3-flash-preview",
+    report: "gemini-3-flash-preview",
+    label: "Gemini 3 Flash Preview",
+  },
+  "3.1": {
+    description: "gemini-3.1-pro-preview",
+    transcription: "gemini-3.1-pro-preview",
+    report: "gemini-3.1-pro-preview",
+    label: "Gemini 3.1 Pro Preview",
   },
 } as const;
 
@@ -96,6 +116,18 @@ const MODEL_TIERS = {
     transcription: "gemini-3-pro-preview",
     report: "gemini-3-pro-preview",
     label: "3 Preview Tier (Gemini 3 Pro Preview)",
+  },
+  "3-flash-preview": {
+    description: "gemini-3-flash-preview",
+    transcription: "gemini-3-flash-preview",
+    report: "gemini-3-flash-preview",
+    label: "3 Flash Preview Tier (Gemini 3 Flash Preview)",
+  },
+  "3.1-pro-preview": {
+    description: "gemini-3.1-pro-preview",
+    transcription: "gemini-3.1-pro-preview",
+    report: "gemini-3.1-pro-preview",
+    label: "3.1 Pro Preview Tier (Gemini 3.1 Pro Preview)",
   },
 } as const;
 
@@ -153,7 +185,7 @@ async function processFile(
   audioChunkMinutes: number,
   generateReports: boolean,
   reportsDir?: string,
-  userInstructions?: string
+  userInstructions?: string,
 ): Promise<void> {
   const inputBaseName = path.basename(inputFile, path.extname(inputFile));
   const sanitizedBaseName = sanitizeDirectoryName(inputBaseName);
@@ -168,14 +200,14 @@ async function processFile(
       // Otherwise use the input file's directory
       outputDir = path.join(
         path.dirname(inputFile),
-        `.offmute_${sanitizedBaseName}`
+        `.offmute_${sanitizedBaseName}`,
       );
     }
   } else {
     // If not saving intermediates, use system temp directory with a unique name
     outputDir = path.join(
       os.tmpdir(),
-      `offmute_${Date.now()}_${sanitizedBaseName}`
+      `offmute_${Date.now()}_${sanitizedBaseName}`,
     );
   }
 
@@ -216,7 +248,7 @@ async function processFile(
         outputPath: path.dirname(inputFile),
         showProgress: true,
         userInstructions,
-      }
+      },
     );
 
     // Generate report if requested
@@ -236,7 +268,7 @@ async function processFile(
           reportName: reportName,
           showProgress: true,
           userInstructions,
-        }
+        },
       );
 
       console.log(`Report saved to: ${reportResult.reportPath}`);
@@ -247,8 +279,8 @@ async function processFile(
 
     console.log(
       `Complete in ${formatDuration(totalSeconds)} (${timePerMinute.toFixed(
-        1
-      )}s per minute)`
+        1,
+      )}s per minute)`,
     );
     console.log(`Transcription: ${transcriptionResult.transcriptionPath}`);
 
@@ -263,7 +295,7 @@ async function processFile(
   } catch (error) {
     console.error(
       chalk.red(`Error processing ${inputFile}:`),
-      error instanceof Error ? error.message : String(error)
+      error instanceof Error ? error.message : String(error),
     );
     throw error;
   }
@@ -280,8 +312,8 @@ async function run() {
     console.error(chalk.red.bold("\n❌ Missing API Key"));
     console.error(
       chalk.yellow(
-        "\nPlease set your GEMINI_API_KEY in the environment to use offmute."
-      )
+        "\nPlease set your GEMINI_API_KEY in the environment to use offmute.",
+      ),
     );
     process.exit(1);
   }
@@ -292,40 +324,40 @@ async function run() {
     .argument("<input>", "Input video file or directory path")
     .option(
       "-m, --model <model>",
-      "Model selection (3-preview, pro, flash, flash-lite)",
-      "pro"
+      "Model selection (pro, flash, flash-lite, 3, 3-flash, 3.1)",
+      "pro",
     )
     .option(
       "-t, --tier <tier>",
-      "[DEPRECATED] Processing tier (first, business, economy, budget, experimental, experimentalBudget, 3-preview) - use --model instead"
+      "[DEPRECATED] Processing tier (first, business, economy, budget, experimental, experimentalBudget, 3-preview, 3-flash-preview) - use --model instead",
     )
     .option(
       "-s, --save-intermediates",
       "Save intermediate processing files",
-      false
+      false,
     )
     .option(
       "-id, --intermediates-dir <path>",
-      "Custom directory for intermediate output (defaults to input file location)"
+      "Custom directory for intermediate output (defaults to input file location)",
     )
     .option(
       "-sc, --screenshot-count <number>",
       "Number of screenshots to extract",
-      "4"
+      "4",
     )
     .option(
       "-ac, --audio-chunk-minutes <number>",
       "Length of audio chunks in minutes",
-      "10"
+      "10",
     )
     .option("-r, --report", "Generate a structured meeting report", false)
     .option(
       "-rd, --reports-dir <path>",
-      "Custom directory for report output (defaults to input file location)"
+      "Custom directory for report output (defaults to input file location)",
     )
     .option(
       "-i, --instructions <text>",
-      "Custom context or instructions to include in AI prompts"
+      "Custom context or instructions to include in AI prompts",
     )
     .version(packageJson.version);
 
@@ -333,8 +365,8 @@ async function run() {
 
   console.log(
     chalk.cyan(
-      "⭐ Welcome to offmute - built by Hrishi (https://twitter.com/hrishioa) and named by Ben (https://twitter.com/bencmejla) ⭐"
-    )
+      "⭐ Welcome to offmute - built by Hrishi (https://twitter.com/hrishioa) and named by Ben (https://twitter.com/bencmejla) ⭐",
+    ),
   );
 
   const options = program.opts();
@@ -343,7 +375,11 @@ async function run() {
   // Handle model/tier selection with backward compatibility
   let modelOption: keyof typeof ALL_MODELS;
   if (options.tier) {
-    console.log(chalk.yellow("Warning: --tier is deprecated. Please use --model instead."));
+    console.log(
+      chalk.yellow(
+        "Warning: --tier is deprecated. Please use --model instead.",
+      ),
+    );
     modelOption = options.tier as keyof typeof ALL_MODELS;
   } else {
     modelOption = options.model as keyof typeof ALL_MODELS;
@@ -381,23 +417,31 @@ async function run() {
     process.exit(1);
   }
 
-console.log(
-  chalk.green(
-    ((audioCount: number) => {
-      const videoCount = files.length - audioCount;
-      const messages: string[] = [];
+  console.log(
+    chalk.green(
+      ((audioCount: number) => {
+        const videoCount = files.length - audioCount;
+        const messages: string[] = [];
 
-      if (audioCount > 0) {
-        messages.push(`Found ${audioCount} audio file${audioCount > 1 ? "s" : ""} to process`);
-      }
-      if (videoCount > 0) {
-        messages.push(`Found ${videoCount} video file${videoCount > 1 ? "s" : ""} to process`);
-      }
+        if (audioCount > 0) {
+          messages.push(
+            `Found ${audioCount} audio file${
+              audioCount > 1 ? "s" : ""
+            } to process`,
+          );
+        }
+        if (videoCount > 0) {
+          messages.push(
+            `Found ${videoCount} video file${
+              videoCount > 1 ? "s" : ""
+            } to process`,
+          );
+        }
 
-      return messages.join('\n');
-    })(files.filter(fn => isAudioFile(fn)).length)
-  )
-);
+        return messages.join("\n");
+      })(files.filter((fn) => isAudioFile(fn)).length),
+    ),
+  );
 
   const startTime = Date.now();
   const results = {
@@ -417,7 +461,7 @@ console.log(
         parseInt(options.audioChunkMinutes),
         options.report,
         options.reportsDir,
-        options.instructions
+        options.instructions,
       );
       results.success++;
     } catch (error) {
@@ -431,20 +475,20 @@ console.log(
   console.log(chalk.cyan("\nProcessing Summary:"));
   console.log(chalk.white(`Total time: ${formatDuration(totalTime)}`));
   console.log(
-    chalk.green(`Successfully processed: ${results.success}/${files.length}`)
+    chalk.green(`Successfully processed: ${results.success}/${files.length}`),
   );
 
   if (results.failed > 0) {
     console.log(chalk.red("\nFailed files:"));
     results.failedFiles.forEach((file) =>
-      console.log(chalk.yellow(`- ${file}`))
+      console.log(chalk.yellow(`- ${file}`)),
     );
     process.exit(1);
   } else if (results.success > 0) {
     console.log(
       chalk.cyan(
-        "\n🌟 If that worked, consider starring https://github.com/southbridgeai/offmute !"
-      )
+        "\n🌟 If that worked, consider starring https://github.com/southbridgeai/offmute !",
+      ),
     );
     console.log(chalk.cyan("    https://github.com/southbridgeai/offmute"));
   }
